@@ -219,18 +219,25 @@ gulp.task('dev',   gulp.series('_vendor', '_preload', '_app_dev'));
 gulp.task('serve', gulp.series('_vendor', '_preload', '_app_dev', '_watch'));
 
 // TASKS (NODE WEBKIT) ========================================================
-gulp.task('_electron', gulp.series('build', function(cb) {
+gulp.task('_electron', gulp.series('build', function pack(cb) {
   packager({
     dir       : 'build',
     out       : '.temp-dist',
     name      : project.name,
-    platform  : 'win32',
-    arch      : 'all',
-    version   : '0.34.2',
+    platform  : 'darwin',
+    arch      : 'arm64',
+    version   : '0.0.1',
     overwrite : true,
-    asar      : true
-  }, function done(err, appPath) {
-    cb(err);
+    asar      : true,
+    download: {mirrorOptions: {
+      mirror: 'https://npm.taobao.org/mirrors/electron/'
+    }}
+  }).then((result)=>{
+    console.log('packager success...', result);
+    cb();
+  }).catch((err)=>{
+    console.log('packager failed ', err);
+    cb();
   })
 }));
 
